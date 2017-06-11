@@ -1,0 +1,64 @@
+#include <ros.h>
+#include <ros/time.h>
+#include <Wire.h>
+#include <Adafruit_Sensor.h>
+#include <Adafruit_HMC5883_U.h>
+#include "MagHMC5883.h"
+#include <std_msgs/String.h>
+
+
+//declare the 3axis magnetometer (compass)
+Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+
+//declare instance of a mag compass
+MagHMC5883 magHMC5883(mag);
+
+ros::NodeHandle  nh;
+
+std_msgs::String pose_msg;
+
+ros::Publisher pub_pose("/pose", &pose_msg);
+
+
+void setup()
+{
+
+  nh.initNode();
+  nh.advertise(pub_pose);
+
+
+  // range_msg.radiation_type = sensor_msgs::Range::ULTRASOUND;
+  // range_msg.header.frame_id =  frameid;
+  // range_msg.field_of_view = 0.1;  // fake
+  // range_msg.min_range = 0.0;
+  // range_msg.max_range = 2.0;
+
+
+}
+
+
+
+void loop()
+{
+	//get pose/heading
+	float headingDegrees = magHMC5883.getHeading();
+	Serial.println(headingDegrees);
+
+	char str[32];
+
+	dtostrf(headingDegrees, 8, 2, str);
+
+
+	pose_msg.data = str;
+
+
+    // char c[] = {"111"};
+    // pose_msg.data = c;
+
+
+
+     pub_pose.publish( &pose_msg );
+
+  delay(1000);
+  nh.spinOnce();
+}
