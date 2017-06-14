@@ -6,7 +6,8 @@
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
 #include "geometry_msgs/Point.h"
-#include <std_msgs/Int16.h>
+#include <std_msgs/Int8.h>
+#include "geometry_msgs/Point.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <std_msgs/Empty.h>
@@ -35,13 +36,44 @@ std_msgs::Float32 irRangeRaw;
 ros::Publisher ir_data_raw("ir_data_raw", &irRangeRaw);
 
 //Subscribers
-void messageCb( const std_msgs::Empty& toggle_msg){
-  digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+void ledToggleCallback( const std_msgs::Int8 &toggle_msg){
+
+  char str[8];
+  sprintf(str, "%d", toggle_msg.data);
+  
+  if (strcmp(str, "1") == 0)
+  {
+    //nh.loginfo(str);
+    digitalWrite(13, HIGH-digitalRead(13));
+  } 
+  else if (strcmp(str, "2") == 0)
+  {
+    //nh.loginfo(str);
+    digitalWrite(9, HIGH-digitalRead(9));
+  }
+  else if (strcmp(str, "3") == 0)
+  {
+    //nh.loginfo(str);
+    digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+    digitalWrite(9, HIGH-digitalRead(9));   // blink the led
+  }
+  else if (strcmp(str, "4") == 0) 
+  {
+    //nh.loginfo(str);
+    digitalWrite(13, HIGH-digitalRead(13));   // blink the led
+    digitalWrite(9, HIGH-digitalRead(9));   // blink the led
+  } 
+  else 
+  {
+    nh.loginfo(str);
+  }
+ 
+
+  
 }
 
 
-ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
-
+ros::Subscriber<std_msgs::Int8> sub("toggle_led", &ledToggleCallback );
 
 
 void setup()
@@ -53,6 +85,7 @@ void setup()
   randomSeed(analogRead(0));
 
   pinMode(13, OUTPUT);
+  pinMode(9, OUTPUT);
   nh.subscribe(sub);
 }
 
