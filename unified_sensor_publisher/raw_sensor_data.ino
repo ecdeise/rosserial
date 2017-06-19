@@ -35,6 +35,11 @@ ros::Publisher mag_data_raw("mag_data_raw", &magDataRaw);
 std_msgs::Float32 irRangeRaw;
 ros::Publisher ir_data_raw("ir_data_raw", &irRangeRaw);
 
+// void messageCb( const std_msgs::Empty& toggle_msg){
+//   digitalWrite(8, HIGH-digitalRead(8)); 
+//   digitalWrite(7, HIGH-digitalRead(7));   // blink the led
+// }
+
 //Subscribers
 void ledToggleCallback( const std_msgs::Int8 &toggle_msg){
 
@@ -44,48 +49,47 @@ void ledToggleCallback( const std_msgs::Int8 &toggle_msg){
   if (strcmp(str, "1") == 0)
   {
     //nh.loginfo(str);
-    digitalWrite(13, HIGH-digitalRead(13));
+    digitalWrite(7, HIGH-digitalRead(7));
   } 
   else if (strcmp(str, "2") == 0)
   {
     //nh.loginfo(str);
-    digitalWrite(9, HIGH-digitalRead(9));
+    digitalWrite(8, HIGH-digitalRead(8));
   }
   else if (strcmp(str, "3") == 0)
   {
     //nh.loginfo(str);
-    digitalWrite(13, HIGH-digitalRead(13));   // blink the led
-    digitalWrite(9, HIGH-digitalRead(9));   // blink the led
+    digitalWrite(7, HIGH-digitalRead(7));   // blink the led
+    digitalWrite(8, HIGH-digitalRead(8));   // blink the led
   }
   else if (strcmp(str, "4") == 0) 
   {
     //nh.loginfo(str);
-    digitalWrite(13, HIGH-digitalRead(13));   // blink the led
-    digitalWrite(9, HIGH-digitalRead(9));   // blink the led
+    digitalWrite(7, HIGH-digitalRead(7));   // blink the led
+    digitalWrite(8, HIGH-digitalRead(8));   // blink the led
   } 
   else 
   {
     nh.loginfo(str);
   }
  
-
-  
 }
 
 
-ros::Subscriber<std_msgs::Int8> sub("toggle_led", &ledToggleCallback );
+ros::Subscriber<std_msgs::Int8> sub("toggle_led", &ledToggleCallback);
 
+//ros::Subscriber<std_msgs::Empty> sub("toggle_led", &messageCb );
 
 void setup()
 {
+  pinMode(7, OUTPUT);
+  pinMode(8, OUTPUT);
   nh.initNode();
   nh.advertise(ir_data_raw);
   nh.advertise(mag_data_raw);
   nh.advertise(ultrasonic_data_raw);
   randomSeed(analogRead(0));
 
-  pinMode(13, OUTPUT);
-  pinMode(9, OUTPUT);
   nh.subscribe(sub);
 }
 
