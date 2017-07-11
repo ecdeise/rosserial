@@ -33,11 +33,36 @@ ros::Publisher mag_data_raw("mag_data_raw", &magDataRaw);
 std_msgs::Float32 irRangeRaw;
 ros::Publisher ir_data_raw("ir_data_raw", &irRangeRaw);
 
+//rostopic pub motor_left std_msgs/Int16 0 --once
 std_msgs::Int16 encoderRight;
 ros::Publisher encoder_data_right("encoder_data_right", &encoderRight);
 
 std_msgs::Int16 encoderLeft;
 ros::Publisher encoder_data_left("encoder_data_left", &encoderLeft);
+
+void motor_left( const std_msgs::Int16& msg){
+
+  //POC
+  if (msg.data > 0) {
+      nh.loginfo("motor_left > 0");
+  } else if (msg.data < 0) {
+      nh.loginfo("motor_left < 0");
+  } else {
+      nh.loginfo("motor_left == 0");
+  }
+
+}
+
+void motor_right( const std_msgs::Int16& msg){
+  
+  nh.loginfo("motor_right");
+
+}
+
+
+ros::Subscriber<std_msgs::Int16> sub_right("motor_right", motor_right);
+
+ros::Subscriber<std_msgs::Int16> sub_left("motor_left", motor_left);
 
 
 void count_encoder_A(){
@@ -53,6 +78,13 @@ void setup()
   pinMode(9, OUTPUT);
   pinMode(8, OUTPUT);
 
+  pinMode(10, OUTPUT);
+  pinMode(6, OUTPUT);
+  pinMode(8, OUTPUT);
+  pinMode(9, OUTPUT);
+  pinMode(5, OUTPUT);
+  pinMode(4, OUTPUT);
+
   attachInterrupt(digitalPinToInterrupt(2), count_encoder_A, FALLING);
   attachInterrupt(digitalPinToInterrupt(3), count_encoder_B, FALLING);
 
@@ -64,7 +96,8 @@ void setup()
   nh.advertise(encoder_data_left);
   randomSeed(analogRead(0));
 
-  nh.subscribe(sub);
+  nh.subscribe(sub_left);
+  nh.subscribe(sub_right);
 }
 
 void getIrRawData(std_msgs::Float32 &irRangeRaw)
@@ -110,6 +143,8 @@ void getEncoderDataLeft(std_msgs::Int16 &encoderLeft){
   encoderLeft.data = encoderValue_B;
 
 }
+
+
 
 void loop()
 {
