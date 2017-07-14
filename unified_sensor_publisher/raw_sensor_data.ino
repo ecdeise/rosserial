@@ -1,8 +1,8 @@
 #include <ros.h>
 #include <ros/time.h>
-#include <Wire.h>
+//#include <Wire.h>
 #include <Adafruit_Sensor.h>
-#include <Adafruit_HMC5883_U.h>
+//#include <Adafruit_HMC5883_U.h>
 #include <std_msgs/String.h>
 #include <std_msgs/Float32.h>
 #include "geometry_msgs/Point.h"
@@ -18,7 +18,7 @@ long ultrasonic_duration = 0;
 //https://www.ez-robot.com/Tutorials/UserTutorials/189/1 encoder on D2 and D3
 
 //register the mag compass
-Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
+//Adafruit_HMC5883_Unified mag = Adafruit_HMC5883_Unified(12345);
 
 //register the ros node
 ros::NodeHandle nh;
@@ -27,35 +27,115 @@ ros::NodeHandle nh;
 std_msgs::Float32 ultraSonicRangeData;
 ros::Publisher ultrasonic_data_raw("ultrasonic_data_raw", &ultraSonicRangeData);
 
-geometry_msgs::Point magDataRaw;
-ros::Publisher mag_data_raw("mag_data_raw", &magDataRaw);
+// geometry_msgs::Point magDataRaw;
+// ros::Publisher mag_data_raw("mag_data_raw", &magDataRaw);
 
 std_msgs::Float32 irRangeRaw;
 ros::Publisher ir_data_raw("ir_data_raw", &irRangeRaw);
 
 //rostopic pub motor_left std_msgs/Int16 0 --once
+
 std_msgs::Int16 encoderRight;
 ros::Publisher encoder_data_right("encoder_data_right", &encoderRight);
 
 std_msgs::Int16 encoderLeft;
 ros::Publisher encoder_data_left("encoder_data_left", &encoderLeft);
 
+
+
 void motor_left( const std_msgs::Int16& msg){
 
-  //POC
-  if (msg.data > 0) {
-      nh.loginfo("motor_left > 0");
-  } else if (msg.data < 0) {
-      nh.loginfo("motor_left < 0");
-  } else {
-      nh.loginfo("motor_left == 0");
-  }
+  int enA = 10;
+  int in1 = 8;
+  int in2 = 9;
+
+    if(msg.data == 0) {
+        digitalWrite(in1, LOW);
+        digitalWrite(in2, LOW);  
+    } else if (msg.data > 0) {
+        digitalWrite(in1, LOW);
+        digitalWrite(in2, HIGH); 
+        analogWrite(enA, msg.data); 
+    } else {
+        digitalWrite(in1, HIGH);
+        digitalWrite(in2, LOW); 
+        analogWrite(enA, -msg.data);
+    }
+
+
+
+    
+    // if(msg.data == 0)
+    // {
+    //   nh.loginfo("motor_left == 0");
+    //   digitalWrite(5, LOW); //
+    //   digitalWrite(4, LOW); //
+    //   digitalWrite(6, HIGH); //
+    //   //digitalWrite(STBY, HIGH); // STYBY - HIGH
+    // }
+    // else if (msg.data > 0)
+    // {
+    //   nh.loginfo("motor_left > 0");
+    //   digitalWrite(4, HIGH);
+    //   digitalWrite(5, LOW);
+    //   //digitalWrite(STBY, HIGH); // STYBY - HIGH
+    //   analogWrite(6, msg.data);
+    // }
+    // else
+    // {
+    //   nh.loginfo("motor_left < 0");
+    //   digitalWrite(4, LOW);
+    //   digitalWrite(5, HIGH);
+    //   //digitalWrite(STBY, HIGH); // STYBY - HIGH
+    //   analogWrite(6, -msg.data);
+    // }
 
 }
 
 void motor_right( const std_msgs::Int16& msg){
   
-  nh.loginfo("motor_right");
+  // motor two
+  int enB = 6;
+  int in3 = 4;
+  int in4 = 5;
+
+  if(msg.data == 0) {
+      digitalWrite(in3, LOW);
+      digitalWrite(in4, LOW);  
+    } else if (msg.data > 0) {
+      digitalWrite(in3, LOW);
+      digitalWrite(in4, HIGH);
+      analogWrite(enB, msg.data); 
+    } else {
+      digitalWrite(in3, HIGH);
+      digitalWrite(in4, LOW);
+      analogWrite(enB, -msg.data); 
+    }
+
+ // if(msg.data == 0)
+ //    {
+ //      nh.loginfo("motor_right == 0");
+ //      digitalWrite(8, LOW); //
+ //      digitalWrite(9, LOW); //
+ //      digitalWrite(10, HIGH); //
+ //      //digitalWrite(STBY, HIGH); // STYBY - HIGH
+ //    }
+ //    else if (msg.data > 0)
+ //    {
+ //      nh.loginfo("motor_right > 0");
+ //      digitalWrite(8, HIGH);
+ //      digitalWrite(9, LOW);
+ //      //digitalWrite(STBY, HIGH); // STYBY - HIGH
+ //      analogWrite(10, msg.data);
+ //    }
+ //    else
+ //    {
+ //      nh.loginfo("motor_right < 0");
+ //      digitalWrite(8, LOW);
+ //      digitalWrite(9, HIGH);
+ //      //digitalWrite(STBY, HIGH); // STYBY - HIGH
+ //      analogWrite(10, -msg.data);
+ //    }
 
 }
 
@@ -90,7 +170,7 @@ void setup()
 
   nh.initNode();
   nh.advertise(ir_data_raw);
-  nh.advertise(mag_data_raw);
+  //nh.advertise(mag_data_raw);
   nh.advertise(ultrasonic_data_raw);
   nh.advertise(encoder_data_right);
   nh.advertise(encoder_data_left);
@@ -106,13 +186,13 @@ void getIrRawData(std_msgs::Float32 &irRangeRaw)
 }
 
 
-void getRawMagnetometerData(sensors_event_t event, geometry_msgs::Point &magDataRaw){
+// void getRawMagnetometerData(sensors_event_t event, geometry_msgs::Point &magDataRaw){
 
-  magDataRaw.x = event.magnetic.x;
-  magDataRaw.y = event.magnetic.y;
-  magDataRaw.z = event.magnetic.z;
+//   magDataRaw.x = event.magnetic.x;
+//   magDataRaw.y = event.magnetic.y;
+//   magDataRaw.z = event.magnetic.z;
 
-}
+// }
 
 void getRawUltraSonicData(std_msgs::Float32 &ultraSonicRangeData) {
 
@@ -149,16 +229,16 @@ void getEncoderDataLeft(std_msgs::Int16 &encoderLeft){
 void loop()
 {
 
-  sensors_event_t event;
-  mag.getEvent(&event);
+  // sensors_event_t event;
+  // mag.getEvent(&event);
 
   //raw IR data
   getIrRawData(irRangeRaw);
   ir_data_raw.publish(&irRangeRaw);
 
   //get magnetometer (compass) pose data
-  getRawMagnetometerData(event, magDataRaw);
-  mag_data_raw.publish(&magDataRaw);
+  //getRawMagnetometerData(event, magDataRaw);
+  //mag_data_raw.publish(&magDataRaw);
 
   //get the ultrasonic ranger 
   getRawUltraSonicData(ultraSonicRangeData);
