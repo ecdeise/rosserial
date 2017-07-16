@@ -62,34 +62,6 @@ void motor_left( const std_msgs::Int16& msg){
         analogWrite(enA, -msg.data);
     }
 
-
-
-    
-    // if(msg.data == 0)
-    // {
-    //   nh.loginfo("motor_left == 0");
-    //   digitalWrite(5, LOW); //
-    //   digitalWrite(4, LOW); //
-    //   digitalWrite(6, HIGH); //
-    //   //digitalWrite(STBY, HIGH); // STYBY - HIGH
-    // }
-    // else if (msg.data > 0)
-    // {
-    //   nh.loginfo("motor_left > 0");
-    //   digitalWrite(4, HIGH);
-    //   digitalWrite(5, LOW);
-    //   //digitalWrite(STBY, HIGH); // STYBY - HIGH
-    //   analogWrite(6, msg.data);
-    // }
-    // else
-    // {
-    //   nh.loginfo("motor_left < 0");
-    //   digitalWrite(4, LOW);
-    //   digitalWrite(5, HIGH);
-    //   //digitalWrite(STBY, HIGH); // STYBY - HIGH
-    //   analogWrite(6, -msg.data);
-    // }
-
 }
 
 void motor_right( const std_msgs::Int16& msg){
@@ -112,31 +84,6 @@ void motor_right( const std_msgs::Int16& msg){
       analogWrite(enB, -msg.data); 
     }
 
- // if(msg.data == 0)
- //    {
- //      nh.loginfo("motor_right == 0");
- //      digitalWrite(8, LOW); //
- //      digitalWrite(9, LOW); //
- //      digitalWrite(10, HIGH); //
- //      //digitalWrite(STBY, HIGH); // STYBY - HIGH
- //    }
- //    else if (msg.data > 0)
- //    {
- //      nh.loginfo("motor_right > 0");
- //      digitalWrite(8, HIGH);
- //      digitalWrite(9, LOW);
- //      //digitalWrite(STBY, HIGH); // STYBY - HIGH
- //      analogWrite(10, msg.data);
- //    }
- //    else
- //    {
- //      nh.loginfo("motor_right < 0");
- //      digitalWrite(8, LOW);
- //      digitalWrite(9, HIGH);
- //      //digitalWrite(STBY, HIGH); // STYBY - HIGH
- //      analogWrite(10, -msg.data);
- //    }
-
 }
 
 
@@ -157,7 +104,6 @@ void setup()
 {
   pinMode(9, OUTPUT);
   pinMode(8, OUTPUT);
-
   pinMode(10, OUTPUT);
   pinMode(6, OUTPUT);
   pinMode(8, OUTPUT);
